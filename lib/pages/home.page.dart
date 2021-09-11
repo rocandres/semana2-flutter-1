@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            color: Colors.grey,
+            color: Colors.blueGrey,
           )),
 
         ],
@@ -115,7 +115,7 @@ _listaBotonesFila4(){
     pintarBoton(componente: Text("."), metodo: (){}),
     pintarBoton(componente: Text("%"), metodo: (){}),
     pintarBoton(componente: Text("+"), metodo: (){}),    
-    pintarBoton(componente: Text("="), metodo: (){},flex: 2),
+    pintarBoton(componente: Text("="), metodo: (){},flex: 2,color: Colors.green),
 
   ];
 }
