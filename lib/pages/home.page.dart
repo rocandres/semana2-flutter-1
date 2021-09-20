@@ -17,28 +17,31 @@ class _HomePageState extends State<HomePage> {
   String _error="";
   List<String> _listaOperaciones=[];
   List<double>_listaNumeros=[]  ;
+  List<String>resultados=[];
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home"),),
-      body: Column(
+      backgroundColor:Colors.black ,
+      appBar: AppBar(title: Text("Calculadora Andres Rodriguez"),),
+      body: Column(        
         children: [
           Expanded(
             flex: 3,
-            child:Container(
-              
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text("Zona resultados"),
-                Text("Zona resultados"),
-                Text("Zona resultados"),
-              ],
+            child:
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 1.0),
+              child: Container(
+                
+              child:   
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: _pintarResultados(),
             ),
-            color: Colors.blue,
-          )),
+              color: Colors.blueGrey,
+          ),
+            )),
           Expanded(
             flex: 1,
             child: 
@@ -236,14 +239,44 @@ class _HomePageState extends State<HomePage> {
       print("entre");
       operacion= operacion.replaceAll("x", "*");
     }
-    if(operacion.contains("√")){
-      operacion= operacion.replaceAll("√", "Sqrt(");
+    if(operacion.contains("√")){    
+      String aux=operacion.substring(operacion.indexOf("√")+1,operacion.length);  
+      operacion=operacion.replaceAll(aux, "");
+      operacion= operacion.replaceAll("√", "("+aux+")^(1/2)");
     }
     if(operacion.contains("÷")){
-      operacion= operacion.replaceAll("÷", "/");
+      print(operacion[operacion.indexOf("÷")+1]);
+      if(operacion[operacion.indexOf("÷")+1]=="0"){
+        throw FormatException("Division por cero es indefinido");
+      }else{
+        operacion= operacion.replaceAll("÷", "/");
+      }      
     }
     if(operacion.contains("²")){
       operacion=_operacion.replaceAll("*²", "^2");
+    }
+    if(operacion.contains("%")){
+      bool flag=true;
+      String numero="";
+      String porecntaje="";
+      String signo="";
+      for(var i=0; i < operacion.length;i++){
+        if(esNumero(operacion[i]) && flag){
+          numero+=operacion[i];
+        }else{
+          flag=false;
+          if(esNumero(operacion[i])){
+            porecntaje+=operacion[i];
+          }else{
+            signo+=operacion[i];
+          }
+          
+        }
+      
+      }
+    porecntaje=numero+"*"+(double.parse(porecntaje)/100).toString();
+    operacion=numero+signo[signo.length-2]+porecntaje;
+
     }    
     print(operacion);
     return operacion;
@@ -258,16 +291,69 @@ class _HomePageState extends State<HomePage> {
         _resultado = expressionFinal
             .evaluate(EvaluationType.REAL, contextModel)
             .toString();
-        print(_resultado) ;
+        resultados.add(_operacion+"="+_resultado);
+        _operacion=_resultado;
+
+
+
+
       });
     } catch (e) {
       setState(() {
         print(e.toString());
-        _error = "Valide la expresión";
+        print(_operacion[_operacion.indexOf("÷")+1]);
+        if(_operacion[_operacion.indexOf("÷")+1]=="0"){    
+          _error="Division por cero es indefinido";
+        }else{
+          _error="Valide la expresion";
+        }
+        
       });
     }
   }
   
+
+  List<Row> _pintarResultados(){
+    List<Row> fila=[];
+    print(resultados);
+    if(resultados.length >0){
+      _depurarResultados();
+      for(var i=0; i < resultados.length;i++){
+       fila.add(Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children:[_widgetResultado(texto: resultados[i].substring(0,resultados[i].indexOf("="))),_widgetResultado(texto: "="),_widgetResultado(texto: resultados[i].substring(resultados[i].indexOf("=")+1,resultados[i].length))] ,
+      )
+       );
+ 
+
+     }
+         return fila;
+
+    }else{
+      return[Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children:[_widgetResultado(texto: ""),_widgetResultado(texto: ""),_widgetResultado(texto: "")] ,
+      )];
+
+    }
+
+    
+  }
+
+  _depurarResultados(){
+    if(resultados.length>5){
+      resultados.removeAt(0);
+    }
+  }
+
+  Widget _widgetResultado({required String texto}){
+    return 
+      Text(texto,
+        style: TextStyle(
+        color: Colors.white,
+        fontSize: 20),);
+
+  }
 
 _listaBotonesFila1(){
   return [
