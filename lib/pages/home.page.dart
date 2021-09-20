@@ -253,7 +253,8 @@ class _HomePageState extends State<HomePage> {
       }      
     }
     if(operacion.contains("²")){
-      operacion=_operacion.replaceAll("*²", "^2");
+      print("entre:"+operacion);
+      operacion=operacion.replaceAll("*²", "^2");
     }
     if(operacion.contains("%")){
       bool flag=true;
@@ -278,7 +279,7 @@ class _HomePageState extends State<HomePage> {
     operacion=numero+signo[signo.length-2]+porecntaje;
 
     }    
-    print(operacion);
+    print("operacion: "+operacion);
     return operacion;
   }
 
